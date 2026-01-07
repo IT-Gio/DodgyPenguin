@@ -30,6 +30,7 @@ jobs:
             --windowed \
             --noconsole \
             --name MyGame \
+            --hidden-import numpy \
             --add-data "animations:animations" \
             --add-data "bg:bg" \
             --add-data "fonts:fonts" \
@@ -38,6 +39,7 @@ jobs:
             --add-data "snowball:snowball" \
             --add-data "ui:ui" \
             main.py
+          
 
       - name: Zip macOS app bundle (IMPORTANT)
         run: |
