@@ -24,12 +24,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build macOS .app with PyInstaller
+      - name: Build macOS .app with PyInstaller (WITH ASSETS)
         run: |
           pyinstaller \
             --windowed \
             --noconsole \
             --name MyGame \
+            --add-data "animations:animations" \
+            --add-data "bg:bg" \
+            --add-data "fonts:fonts" \
+            --add-data "music:music" \
+            --add-data "powerups:powerups" \
+            --add-data "snowball:snowball" \
+            --add-data "ui:ui" \
             main.py
 
       - name: Zip macOS app bundle (IMPORTANT)
