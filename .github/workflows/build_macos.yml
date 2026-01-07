@@ -1,7 +1,7 @@
 name: Build macOS App
 
 on:
-  workflow_dispatch:   # allows manual run
+  workflow_dispatch:
   push:
     tags:
       - "v*"
@@ -24,15 +24,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build .app with PyInstaller
+      - name: Build macOS .app with PyInstaller
         run: |
           pyinstaller \
             --windowed \
+            --noconsole \
             --name MyGame \
             main.py
 
-      - name: Upload macOS app
+      - name: Zip macOS app bundle (IMPORTANT)
+        run: |
+          cd dist
+          zip -r MyGame.app.zip MyGame.app
+
+      - name: Upload macOS app artifact
         uses: actions/upload-artifact@v4
         with:
           name: MyGame-macOS
-          path: dist/MyGame.app
+          path: dist/MyGame.app.zip
