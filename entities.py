@@ -4,14 +4,17 @@ import math
 from utils import resource_path
 
 
+# -------------------------
+# Fish Power-Up
+# -------------------------
 class FishPowerUp:
     def __init__(self, screen):
-        self.screen = screen
-        self.sprite_sheet = pygame.image.load(resource_path("powerups/fishy.png")).convert_alpha()
+        self.screen = screen  # raw pygame.Surface
+        self.sprite_sheet = pygame.image.load(resource_path("assets/powerups/fishy.png")).convert_alpha()
         self.frames = []
         self.current_frame = 0
         self.animation_timer = 0
-        self.animation_speed = 100
+        self.animation_speed = 100  # ms per frame
 
         sheet_width, sheet_height = self.sprite_sheet.get_size()
         fw = sheet_width // 3
@@ -27,8 +30,8 @@ class FishPowerUp:
                 self.frames.append(frame)
 
         self.radius = int(min(self.frames[0].get_width(), self.frames[0].get_height()) * 0.33)
-        self.x = random.randint(self.radius, self.screen.width - self.radius)
-        self.y = random.randint(self.radius, self.screen.height - self.radius)
+        self.x = random.randint(self.radius, self.screen.get_width() - self.radius)
+        self.y = random.randint(self.radius, self.screen.get_height() - self.radius)
 
     def update(self, dt):
         self.animation_timer += dt
@@ -38,15 +41,16 @@ class FishPowerUp:
 
     def draw(self):
         frame = self.frames[self.current_frame]
-        surf = self.screen.screen
 
+        # draw shadow
         shadow_w = int(frame.get_width() * 0.55)
         shadow_h = 6
         shadow_surface = pygame.Surface((shadow_w, shadow_h), pygame.SRCALPHA)
         pygame.draw.ellipse(shadow_surface, (0, 0, 0, 80), shadow_surface.get_rect())
-        surf.blit(shadow_surface, (int(self.x - shadow_w / 2), int(self.y + frame.get_height() * 0.18)))
+        self.screen.blit(shadow_surface, (int(self.x - shadow_w / 2), int(self.y + frame.get_height() * 0.18)))
 
-        surf.blit(frame, frame.get_rect(center=(int(self.x), int(self.y))))
+        # draw image
+        self.screen.blit(frame, frame.get_rect(center=(int(self.x), int(self.y))))
 
     def collides_with(self, penguin):
         dx = self.x - penguin.x
@@ -54,10 +58,13 @@ class FishPowerUp:
         return math.hypot(dx, dy) < (self.radius + penguin.radius)
 
 
+# -------------------------
+# Pebble
+# -------------------------
 class Pebble:
     def __init__(self, screen):
         self.screen = screen
-        self.sprite_sheet = pygame.image.load(resource_path("powerups/pebble.png")).convert_alpha()
+        self.sprite_sheet = pygame.image.load(resource_path("assets/powerups/pebble.png")).convert_alpha()
         self.frames = []
         self.current_frame = 0
         self.animation_timer = 0
@@ -77,8 +84,8 @@ class Pebble:
                 self.frames.append(frame)
 
         self.radius = int(min(self.frames[0].get_width(), self.frames[0].get_height()) * 0.25)
-        self.x = random.randint(self.radius, self.screen.width - self.radius)
-        self.y = random.randint(self.radius, self.screen.height - self.radius)
+        self.x = random.randint(self.radius, self.screen.get_width() - self.radius)
+        self.y = random.randint(self.radius, self.screen.get_height() - self.radius)
 
     def update(self, dt):
         self.animation_timer += dt
@@ -88,15 +95,16 @@ class Pebble:
 
     def draw(self):
         frame = self.frames[self.current_frame]
-        surf = self.screen.screen
 
+        # draw shadow
         shadow_w = int(frame.get_width() * 0.45)
         shadow_h = 6
         shadow_surface = pygame.Surface((shadow_w, shadow_h), pygame.SRCALPHA)
         pygame.draw.ellipse(shadow_surface, (0, 0, 0, 80), shadow_surface.get_rect())
-        surf.blit(shadow_surface, (int(self.x - shadow_w / 2), int(self.y + frame.get_height() * 0.20)))
+        self.screen.blit(shadow_surface, (int(self.x - shadow_w / 2), int(self.y + frame.get_height() * 0.20)))
 
-        surf.blit(frame, frame.get_rect(center=(int(self.x), int(self.y))))
+        # draw image
+        self.screen.blit(frame, frame.get_rect(center=(int(self.x), int(self.y))))
 
     def collides_with(self, penguin):
         dx = self.x - penguin.x
@@ -104,6 +112,9 @@ class Pebble:
         return math.hypot(dx, dy) < (self.radius + penguin.radius)
 
 
+# -------------------------
+# Multiplier Power-Up
+# -------------------------
 class MultiplierPowerUp:
     def __init__(self, x, y, mult_frames):
         self.x = x
@@ -127,17 +138,18 @@ class MultiplierPowerUp:
             if self.timer <= 0:
                 self.active = False
 
-    def draw(self, screen):
+    def draw(self, screen_surface):
         frame_img = self.mult_frames[self.frame]
-        surf = screen.screen
 
+        # draw shadow
         shadow_w = int(frame_img.get_width() * 0.8)
         shadow_h = 6
         shadow_surface = pygame.Surface((shadow_w, shadow_h), pygame.SRCALPHA)
         pygame.draw.ellipse(shadow_surface, (0, 0, 0, 80), shadow_surface.get_rect())
-        surf.blit(shadow_surface, (int(self.x - shadow_w / 2), int(self.y + frame_img.get_height() * 0.20)))
+        screen_surface.blit(shadow_surface, (int(self.x - shadow_w / 2), int(self.y + frame_img.get_height() * 0.20)))
 
-        surf.blit(frame_img, frame_img.get_rect(center=(int(self.x), int(self.y))))
+        # draw image
+        screen_surface.blit(frame_img, frame_img.get_rect(center=(int(self.x), int(self.y))))
 
     def collides_with(self, penguin):
         dx = self.x - penguin.x
@@ -145,6 +157,9 @@ class MultiplierPowerUp:
         return math.hypot(dx, dy) < (self.radius + penguin.radius)
 
 
+# -------------------------
+# Patch Snowflake
+# -------------------------
 class PatchSnowflake:
     def __init__(self, patch):
         self.patch = patch
@@ -165,32 +180,21 @@ class PatchSnowflake:
         pygame.draw.circle(surface, (255, 255, 255), (int(self.x), int(self.y)), self.size)
 
 
+# -------------------------
+# Snow Patch
+# -------------------------
 class SnowPatch:
     def __init__(self, screen, world_rect):
         self.screen = screen
-
-        # -------------------------
-        # WORLD-SPACE RECT (PERMANENT)
-        # -------------------------
         self.world_rect = world_rect.copy()
-
-        # This will be updated every frame by the game loop
-        self._screen_rect = pygame.Rect(
-            world_rect.x,
-            world_rect.y,
-            world_rect.w,
-            world_rect.h
-        )
-
+        self._screen_rect = pygame.Rect(world_rect)
         self.spawn_time = pygame.time.get_ticks()
         self.lifetime = 45000
 
-        # -------------------------
-        # CREATE SHAPED SURFACES ONCE
-        # -------------------------
         self.surface = pygame.Surface(self.world_rect.size, pygame.SRCALPHA)
         self.mask_surface = pygame.Surface(self.world_rect.size, pygame.SRCALPHA)
 
+        # create polygon shape
         points = []
         cx, cy = self.world_rect.width // 2, self.world_rect.height // 2
         rx, ry = self.world_rect.width // 2, self.world_rect.height // 2
@@ -202,28 +206,16 @@ class SnowPatch:
             y = cy + math.sin(ang) * ry * jitter
             points.append((x, y))
 
-        # Actual snow patch
         pygame.draw.polygon(self.surface, (235, 235, 255, 160), points)
-
-        # Dark preview mask (same shape)
         pygame.draw.polygon(self.mask_surface, (0, 0, 0, 45), points)
 
-    # -------------------------
-    # SCREEN-SPACE RECT (for PatchSnowflake compatibility)
-    # -------------------------
     @property
     def rect(self):
         return self._screen_rect
 
-    # -------------------------
-    # LIFETIME
-    # -------------------------
     def expired(self):
         return pygame.time.get_ticks() - self.spawn_time > self.lifetime
 
-    # -------------------------
-    # WORLD DRAW
-    # -------------------------
     def draw(self, target, camera_x=0, camera_y=0):
         self._screen_rect.topleft = (
             int(self.world_rect.x - camera_x),
@@ -231,18 +223,18 @@ class SnowPatch:
         )
         target.blit(self.surface, self._screen_rect.topleft)
 
-    # -------------------------
-    # PREVIEW DRAW (SCREEN-SPACE ONLY)
-    # -------------------------
     def draw_preview(self, target, screen_rect):
         target.blit(self.mask_surface, screen_rect.topleft)
 
 
+# -------------------------
+# Snowball
+# -------------------------
 class Snowball:
     def __init__(self, screen, score):
         self.screen = screen
         self.radius = random.randint(6, 10)
-        self.original_image = pygame.image.load(resource_path("snowball/snowball.png")).convert_alpha()
+        self.original_image = pygame.image.load(resource_path("assets/snowball/snowball.png")).convert_alpha()
         scale_factor = (self.radius * 2) / self.original_image.get_width()
         self.image = pygame.transform.smoothscale(
             self.original_image,
@@ -252,7 +244,7 @@ class Snowball:
         self.rotation_angle = 0
 
         side = random.randint(0, 3)
-        w, h = screen.width, screen.height
+        w, h = self.screen.get_width(), self.screen.get_height()
 
         if side == 0:
             self.x = random.randint(0, w)
@@ -283,8 +275,6 @@ class Snowball:
         self.rotation_angle = (self.rotation_angle + 5) % 360
 
     def draw(self):
-        surf = self.screen.screen
-
         shadow_color = (0, 0, 0, 100)
         shadow_offset_y = 22
         shadow_scale = 0.5
@@ -294,16 +284,16 @@ class Snowball:
         shadow_surface = pygame.Surface((shadow_w, shadow_h), pygame.SRCALPHA)
         pygame.draw.ellipse(shadow_surface, shadow_color, shadow_surface.get_rect())
 
-        surf.blit(shadow_surface, shadow_surface.get_rect(center=(int(self.x), int(self.y + shadow_offset_y))))
+        self.screen.blit(shadow_surface, shadow_surface.get_rect(center=(int(self.x), int(self.y + shadow_offset_y))))
 
         rotated = pygame.transform.rotate(self.image, self.rotation_angle)
         rect = rotated.get_rect(center=(int(self.x), int(self.y)))
-        surf.blit(rotated, rect)
+        self.screen.blit(rotated, rect)
 
     def is_off_screen(self):
         return (
-            self.x < -self.radius or self.x > self.screen.width + self.radius or
-            self.y < -self.radius or self.y > self.screen.height + self.radius
+            self.x < -self.radius or self.x > self.screen.get_width() + self.radius or
+            self.y < -self.radius or self.y > self.screen.get_height() + self.radius
         )
 
     def collides_with(self, penguin):
@@ -311,13 +301,15 @@ class Snowball:
         dy = self.y - penguin.y
         return math.hypot(dx, dy) < (self.radius + penguin.radius)
 
+
+# -------------------------
+# Shovel Power-Up
+# -------------------------
 class ShovelPowerUp:
     def __init__(self, screen):
         self.screen = screen
 
-        sheet = pygame.image.load(
-            resource_path("powerups/shovel.png")
-        ).convert_alpha()
+        sheet = pygame.image.load(resource_path("assets/powerups/shovel.png")).convert_alpha()
 
         self.frames = []
         fw, fh = 32, 32
@@ -334,9 +326,8 @@ class ShovelPowerUp:
         self.anim_delay = 120  # ms
 
         self.radius = int(self.frames[0].get_width() * 0.35)
-
-        self.x = random.randint(self.radius, screen.width - self.radius)
-        self.y = random.randint(self.radius, screen.height - self.radius)
+        self.x = random.randint(self.radius, self.screen.get_width() - self.radius)
+        self.y = random.randint(self.radius, self.screen.get_height() - self.radius)
 
     def update(self, dt):
         self.anim_timer += dt
@@ -346,9 +337,7 @@ class ShovelPowerUp:
 
     def draw(self):
         img = self.frames[self.frame]
-        self.screen.screen.blit(
-            img, img.get_rect(center=(int(self.x), int(self.y)))
-        )
+        self.screen.blit(img, img.get_rect(center=(int(self.x), int(self.y))))
 
     def collides_with(self, penguin):
         dx = self.x - penguin.x

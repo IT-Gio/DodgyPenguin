@@ -94,10 +94,10 @@ def run_game():
     clock = pygame.time.Clock()
 
     FONT = pygame.font.Font(
-    resource_path("fonts/pixel.ttf"), 24
+    resource_path("assets/fonts/pixel.ttf"), 24
     )
     BIG_FONT = pygame.font.Font(
-        resource_path("fonts/pixel.ttf"), 48
+        resource_path("assets/fonts/pixel.ttf"), 48
     )
     
 
@@ -105,13 +105,13 @@ def run_game():
     prev_state = START
 
     highscore = load_highscore()
-    
-    floor_tile = pygame.image.load(resource_path("bg/floor.png")).convert()
+
+    floor_tile = pygame.image.load(resource_path("assets/bg/floor.png")).convert()
 
     # -------------------------
     # Load multiplier frames (3x3, 32x32)
     # -------------------------
-    sprite_sheet = pygame.image.load(resource_path("powerups/mult.png")).convert_alpha()
+    sprite_sheet = pygame.image.load(resource_path("assets/powerups/mult.png")).convert_alpha()
     mult_frames = []
     fw, fh = 32, 32
     for r in range(3):
@@ -129,21 +129,21 @@ def run_game():
     # -------------------------
 
     controls_bg = pygame.image.load(
-        resource_path("ui/banner_skin.png")
+        resource_path("assets/ui/banner_skin.png")
     ).convert_alpha()
 
     ICON_SIZE_FISH = 48
     ICON_SIZE_PEBBLE = 64
 
-    fish_icon = pygame.image.load(resource_path("powerups/fishy.png")).convert_alpha().subsurface((0, 0, 32, 32))
+    fish_icon = pygame.image.load(resource_path("assets/powerups/fishy.png")).convert_alpha().subsurface((0, 0, 32, 32))
     fish_icon = pygame.transform.scale(fish_icon, (ICON_SIZE_FISH, ICON_SIZE_FISH))
 
-    pebble_icon = pygame.image.load(resource_path("powerups/pebble.png")).convert_alpha().subsurface((0, 0, 32, 32))
+    pebble_icon = pygame.image.load(resource_path("assets/powerups/pebble.png")).convert_alpha().subsurface((0, 0, 32, 32))
     pebble_icon = pygame.transform.scale(pebble_icon, (ICON_SIZE_PEBBLE, ICON_SIZE_PEBBLE))
 
 
     title_bg = pygame.image.load(
-        resource_path("ui/title.png")
+        resource_path("assets/ui/title.png")
     ).convert_alpha()
 
     title_bg = pygame.transform.scale(
@@ -158,7 +158,7 @@ def run_game():
     skin_previews = {}
 
     for skin in AVAILABLE_SKINS:
-        path = resource_path(f"animations/{skin}/walk_down.png")
+        path = resource_path(f"assets/animations/{skin}/walk_down.png")
         sheet = pygame.image.load(path).convert_alpha()
 
         # take first frame (32x32)
@@ -453,7 +453,7 @@ def run_game():
         if state == START:
             # ---------- TITLE IMAGE (BACKGROUND PLATE) ----------
             title_img = pygame.image.load(
-                resource_path("ui/title.png")
+                resource_path("assets/ui/title.png")
             ).convert_alpha()
 
             # move the sign DOWN a bit
@@ -515,7 +515,7 @@ def run_game():
             UI_BLUE = (20, 60, 120)
             TITLE_COLOR = (253, 162, 18)
 
-            CTRL_FONT = pygame.font.Font(resource_path("fonts/pixel.ttf"), 16)
+            CTRL_FONT = pygame.font.Font(resource_path("assets/fonts/pixel.ttf"), 16)
 
             # ---------- TITLE ----------
             draw_centered_text(
@@ -701,7 +701,7 @@ def run_game():
             # --------------------------------------------------
             game_data["shovel_timer"] += dt
             if game_data["shovel_timer"] >= 45000 and game_data["shovel"] is None:
-                game_data["shovel"] = ShovelPowerUp(screen)
+                game_data["shovel"] = ShovelPowerUp(screen.screen)
                 game_data["shovel_timer"] = 0
 
             if game_data["shovel"]:
@@ -796,7 +796,7 @@ def run_game():
 
                     # Spawn the real patch in WORLD space
                     world_rect = game_data["pending_patch_world_rect"]
-                    patch = SnowPatch(screen, world_rect)
+                    patch = SnowPatch(screen.screen, world_rect)
                     patch.world_rect = world_rect.copy()   # enforce world-awareness
                     snow_patches.append(patch)
 
@@ -902,7 +902,7 @@ def run_game():
                 draw_world_preview_circle(pf["x"], pf["y"], 26, 45, pulse=pulse)
 
                 if now - pf["t0"] >= POWERUP_PREVIEW_MS:
-                    game_data["fish"] = FishPowerUp(screen)
+                    game_data["fish"] = FishPowerUp(screen.screen)
                     game_data["fish"].world_x = float(pf["x"])
                     game_data["fish"].world_y = float(pf["y"])
 
@@ -929,7 +929,7 @@ def run_game():
             # --------------------------------------------------
             game_data["pebble_timer"] += dt
             if game_data["pebble_timer"] >= random.randint(15000, 25000) and game_data["pebble"] is None:
-                game_data["pebble"] = Pebble(screen)
+                game_data["pebble"] = Pebble(screen.screen)
                 game_data["pebble_timer"] = 0
                 if not hasattr(game_data["pebble"], "world_x"):
                     game_data["pebble"].world_x = float(game_data["pebble"].x)
@@ -954,7 +954,7 @@ def run_game():
             delay_ms = max(250, (60 - game_data["score"] * 2 + game_data["spawn_delay_bonus"]) * 16)
 
             if game_data["spawn_timer"] >= delay_ms:
-                sb = Snowball(screen, game_data["score"])
+                sb = Snowball(screen.screen, game_data["score"])
                 # first time: convert to world coords
                 if not hasattr(sb, "world_x"):
                     sb.world_x = float(sb.x) + game_data["camera_x"]
@@ -1088,7 +1088,7 @@ def run_game():
             game_data["go_spawn_timer"] += dt
             if game_data["go_spawn_timer"] > 180:
                 game_data["go_spawn_timer"] = 0
-                sb = Snowball(screen, game_data["score"])
+                sb = Snowball(screen.screen, game_data["score"])
                 sb.world_x = go_penguin.world_x + screen.width + random.randint(0, 120)
                 sb.world_y = random.randint(
                     int(go_penguin.world_y - screen.height // 2),

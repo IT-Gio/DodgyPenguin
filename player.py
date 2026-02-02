@@ -38,7 +38,7 @@ class Penguin:
 
         skin_cfg = SKINS.get(SELECTED_SKIN, SKINS["default"])
         scale = skin_cfg["scale"]
-        skin_path = f"animations/{SELECTED_SKIN}/"
+        skin_path = f"assets/animations/{SELECTED_SKIN}/"
 
         # load sheets
         sheets = {
