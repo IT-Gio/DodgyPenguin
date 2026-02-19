@@ -10,27 +10,38 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      # 1️⃣ Checkout the repo
       - uses: actions/checkout@v4
 
+      # 2️⃣ Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
           pip3 install -r requirements.txt
+          pip3 install pyinstaller
 
+      # 4️⃣ Build macOS app with PyInstaller
       - name: Build macOS APP
         run: |
-          pyinstaller --windowed --clean \
-            --add-data "assets:assets" \
-            --name "Dodgy Penguin" \
-            main.py
+          pyinstaller --windowed --name "Dodgy Penguin" \
+          --add-data "assets:assets" \
+          main.py
 
+      # 5️⃣ Zip the .app properly
+      - name: Zip macOS app
+        run: |
+          cd dist
+          zip -r "DodgyPenguin-MacOS.zip" "Dodgy Penguin.app"
+
+      # 6️⃣ Upload the zip artifact
       - name: Upload macOS build
         uses: actions/upload-artifact@v4
         with:
           name: DodgyPenguin-macOS
-          path: dist/
+          path: dist/DodgyPenguin-MacOS.zip
