@@ -350,8 +350,18 @@ def run_game():
 
                 # ---------- GLOBAL ESC ----------
                 if event.key == pygame.K_ESCAPE:
-                    if state in (SKIN_MENU, VOLUME_MENU):
+                    if state in (SKIN_MENU, VOLUME_MENU,):
                         state = prev_state
+                    elif state == GAME_OVER:
+                        game_data = reset()
+                        snow_patches.clear()
+                        patch_snowflakes.clear()
+                        pre_snowflakes.clear()
+                        snowfall_active = False
+                        pending_patch_rect = None
+                        fish_saved_this_gameover = False
+                        state = START
+
                     else:
                         pygame.quit()
                         sys.exit()
@@ -360,7 +370,15 @@ def run_game():
                 elif state == START:
                     if event.key == pygame.K_SPACE:
                         audio.sound_start_game.play()
+                        game_data = reset()
+                        snow_patches.clear()
+                        patch_snowflakes.clear()
+                        pre_snowflakes.clear()
+                        snowfall_active = False
+                        pending_patch_rect = None
+                        fish_saved_this_gameover = False
                         state = PLAYING
+                
 
                     elif event.key == pygame.K_s:
                         audio.sound_pickup.play()
@@ -374,7 +392,9 @@ def run_game():
 
                 # ---------- GAME OVER ----------
                 elif state == GAME_OVER:
+                
                     if event.key == pygame.K_SPACE:
+                        # Restart game
                         game_data = reset()
                         snow_patches.clear()
                         patch_snowflakes.clear()
@@ -384,6 +404,21 @@ def run_game():
                         next_patch_time = now + random.randint(8000, 14000)
                         fish_saved_this_gameover = False
                         state = PLAYING
+                
+                    elif event.key == pygame.K_s:
+                        # Open skins menu
+                        prev_state = GAME_OVER
+                        state = SKIN_MENU
+                        audio.sound_pickup.play()
+                
+                    elif event.key == pygame.K_v:
+                        # Open volume menu
+                        prev_state = GAME_OVER
+                        state = VOLUME_MENU
+                        audio.sound_pickup.play()
+
+                
+                
 
                 # ---------- SKIN MENU ----------
                 elif state == SKIN_MENU:
@@ -1121,14 +1156,17 @@ def run_game():
             go_penguin.update(KeyProxy({pygame.K_RIGHT: True}), dt, [])
             go_penguin.draw()
 
-            # UI
+            # GAME OVER UI
+            # -------------------------
             draw_centered_text(screen.screen, "GAME OVER", BIG_FONT, (200, 0, 0), -140)
             draw_centered_text(screen.screen, f"Score: {game_data['score']}", FONT, (0, 0, 0), -60)
             draw_centered_text(screen.screen, f"High Score: {highscore}", FONT, (0, 0, 0), -20)
             draw_centered_text(screen.screen, f"Total Fish: {load_fish_total()}", FONT, (0, 100, 200), 40)
-            draw_centered_text(screen.screen, "SPACE = Restart", FONT, (0, 0, 0), 120)
-            draw_centered_text(screen.screen, "S = Skins    V = Volume", FONT, (0, 0, 0), 160)
-            draw_centered_text(screen.screen, "ESC = Quit", FONT, (0, 0, 0), 200)
+
+            draw_centered_text(screen.screen, "[ SPACE ]  RESTART", FONT, (20, 162, 18), 120)
+            draw_centered_text(screen.screen, "[ S ]      SKINS", FONT, (253, 162, 18), 160)
+            draw_centered_text(screen.screen, "[ V ]      VOLUME", FONT, (67, 1, 105), 200)
+            draw_centered_text(screen.screen, "[ ESC ]    MAIN MENU", FONT, (0, 0, 0), 240)
 
         pygame.display.update()
 
